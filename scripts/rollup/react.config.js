@@ -10,7 +10,7 @@ export default [
         input: `${pkgPath}/${module}`,
         output: {
             file: `${pkgDistPath}/index.js`,
-            name: `index.js`,
+            name: `React`,
             format: 'umd'
         },
         plugins: [
@@ -27,22 +27,22 @@ export default [
             })
         ]
     },
-    // {
-    //     input: `${pkgPath}/src/jsx.ts`,
-    //     output: [
-    //         {
-    //             file: `${pkgDistPath}/jsx-runtime.js`,
-    //             name: `jsx-runtime.js`,
-    //             format: 'umd'
-    //         },
-    //         {
-    //             file: `${pkgDistPath}/jsx-dev-runtime.js`,
-    //             name: `jsx-dev-runtime.js`,
-    //             format: 'umd'
-    //         }
-    //     ],
-    //     plugins: [
-    //         ...getBaseRollupPlugins()
-    //     ]
-    // },
+    {
+        input: `${pkgPath}/src/jsx.ts`,
+        output: [
+            {
+                file: `${pkgDistPath}/jsx-runtime.js`,
+                name: `jsx-runtime`,
+                format: 'umd'
+            },
+            {
+                file: `${pkgDistPath}/jsx-dev-runtime.js`,
+                name: `jsx-dev-runtime`,
+                format: 'umd'
+            }
+        ],
+        plugins: [
+            ...getBaseRollupPlugins()
+        ]
+    },
 ];

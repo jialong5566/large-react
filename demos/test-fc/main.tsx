@@ -8,13 +8,10 @@ function App() {
 }
 
 function Child() {
-  const [n] = useState(12388)
-
-  return <span>{n}</span>
+  const [n, setN] = useState(100)
+  window.setN = setN;
+  return n;
 }
 
-const ele = <App a={5}/>;
-console.log(ele)
 
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(ele)
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<Child/>)

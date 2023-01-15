@@ -4,7 +4,8 @@ import {Dispatcher} from 'react/src/currentDispatcher';
 import {
   createUpdate,
   createUpdateQueue,
-  enqueueUpdate, processUpdateQueue,
+  enqueueUpdate,
+  processUpdateQueue,
   UpdateQueue
 } from './updateQueue';
 import {Dispatch} from 'react/src/currentDispatcher';
@@ -39,6 +40,8 @@ export function renderWithHooks(wip: FiberNode) {
   const children = Component(props);
 
   currentlyRenderingFiber = null;
+  workInProgressHook = null;
+  currentHook = null;
   return children;
 }
 
@@ -127,7 +130,7 @@ function updateWorkInProgressHook(): Hook {
     nextCurrentHook = currentHook.next;
   }
   if (nextCurrentHook === null) {
-    throw new Error("组件本次执行的hook 和 上次的数量不一样")
+    throw new Error('组件本次执行的hook 和 上次的数量不一样');
   }
 
   currentHook = nextCurrentHook;
@@ -149,4 +152,4 @@ function updateWorkInProgressHook(): Hook {
     workInProgressHook = newHook;
   }
   return workInProgressHook;
-};
+}

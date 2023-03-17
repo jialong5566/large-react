@@ -1,4 +1,4 @@
-import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
+import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
 import {
 	ElementType,
 	Key,
@@ -7,6 +7,8 @@ import {
 	Ref,
 	Type
 } from 'shared/ReactTypes';
+
+export const Fragment = REACT_FRAGMENT_TYPE;
 
 const ReactElement = (
 	type: Type,
@@ -41,8 +43,13 @@ export function isValidElement(object: any) {
 	);
 }
 
-export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
-	let key: Key = null;
+export const jsx = (
+	type: ElementType,
+	_key: any,
+	config: any,
+	...maybeChildren: any
+) => {
+	let key: Key = _key ?? null;
 	let ref: Ref = null;
 	const props: Props = {};
 	for (const prop in config) {
@@ -75,19 +82,19 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
 	return ReactElement(type, key, ref, props);
 };
 
-export const jsxDEV = (type: ElementType, config: any) => {
-	let key: Key = null;
+export const jsxDEV = (type: ElementType, config: any, _key: any) => {
+	const key: Key = _key ?? null;
 	const props: any = {};
 	let ref: Ref = null;
 
 	for (const prop in config) {
 		const val = config[prop];
-		if (prop === 'key') {
-			if (hasValidKey(config)) {
-				key = '' + val;
-			}
-			continue;
-		}
+		// if (prop === 'key') {
+		//   if (hasValidKey(config)) {
+		//     key = '' + val;
+		//   }
+		//   continue;
+		// }
 		if (prop === 'ref' && val !== undefined) {
 			if (hasValidRef(config)) {
 				ref = val;

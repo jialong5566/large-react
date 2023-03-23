@@ -1,7 +1,6 @@
 {
   "env": {
     "browser": true,
-    "jest": true,
     "es2021": true,
     "node": true
   },
@@ -25,5 +24,8 @@
     "no-case-declarations": "off",
     "no-constant-condition": "off",
     "@typescript-eslint/ban-ts-comment": "off"
-  }
+  },
+  "ignorePatterns": [
+    "**/__tests__/*.js"
+  ]
 }

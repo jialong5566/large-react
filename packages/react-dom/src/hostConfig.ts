@@ -17,14 +17,16 @@ export const createTextInstance = (content: string) => {
 	return document.createTextNode(content);
 };
 
-export const appendInitialChild = (
-	parent: Instance | Container,
-	child: Instance
-) => {
+export const appendInitialChild = (parent: Instance, child: Instance) => {
 	parent.appendChild(child);
 };
 
-export const appendChildToContainer = appendInitialChild;
+export const appendChildToContainer = (
+	child: Instance,
+	container: Container
+) => {
+	container.appendChild(child);
+};
 
 export function commitUpdate(fiber: FiberNode) {
 	switch (fiber.tag) {

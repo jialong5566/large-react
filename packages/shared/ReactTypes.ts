@@ -12,4 +12,13 @@ export interface ReactElementType {
 	props: Props;
 }
 
+export interface ReactElement {
+	$$typeof: symbol | number;
+	type: ElementType;
+	key: Key;
+	props: Props;
+	ref: Ref;
+	__mark: 'jialong';
+}
+
 export type Action<State> = State | ((prevState: State) => State);

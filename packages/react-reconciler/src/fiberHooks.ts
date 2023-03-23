@@ -40,12 +40,16 @@ export interface FCUpdateQueue<State> extends UpdateQueue<State> {
 	lastEffect: Effect | null;
 }
 
+type TEffectCallback = () => void;
+type TEffectDeps = any[] | null;
+
 type EffectCallback = () => void;
 type EffectDeps = any[] | null;
 
 export function renderWithHooks(wip: FiberNode, lane: Lane) {
 	currentlyRenderingFiber = wip;
 	wip.memoizedState = null;
+	wip.updateQueue = null;
 	renderLanes = lane;
 
 	const current = wip.alternate;
@@ -68,14 +72,14 @@ export function renderWithHooks(wip: FiberNode, lane: Lane) {
 
 const HooksDispatcherOnMount: Dispatcher = {
 	useState: mountState,
-	useEffect: updateEffect //todo
+	useEffect: mountEffect //todo
 };
 const HooksDispatcherOnUpdate: Dispatcher = {
 	useState: updateState,
 	useEffect: updateEffect
 };
 
-function mountEffect(create: EffectCallback | void, deps: EffectDeps) {
+function mountEffect(create: TEffectCallback | void, deps: TEffectDeps | void) {
 	const hook = mountWorkInProgressHook();
 	const nextDeps = deps === undefined ? null : deps;
 	(currentlyRenderingFiber as FiberNode).flags |= PassiveEffect;
@@ -129,8 +133,45 @@ function createFCUpdateQueue<State>() {
 	return updateQueue;
 }
 
-function updateEffect() {
-	console.warn('updateEffect');
+function updateEffect(
+	create: TEffectCallback | void,
+	deps: TEffectDeps | void
+) {
+	const hook = updateWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	let destroy: TEffectCallback | void;
+	if (currentHook !== null) {
+		const prevEffect = currentHook.memoizedState as Effect;
+		destroy = prevEffect.destroy;
+		if (nextDeps !== null) {
+			// 浅比较依赖
+			const prevDeps = prevEffect.deps;
+			if (areHookInputsEqual(prevDeps, nextDeps)) {
+				hook.memoizedState = pushEffect(Passive, create, destroy, nextDeps);
+				return;
+			}
+		}
+	}
+	(currentlyRenderingFiber as FiberNode).flags |= PassiveEffect;
+	hook.memoizedState = pushEffect(
+		Passive | HookHasEffect,
+		create,
+		undefined,
+		nextDeps
+	);
+}
+
+function areHookInputsEqual(nextDeps: TEffectDeps, prevDeps: TEffectDeps) {
+	if (prevDeps === null || nextDeps === null) {
+		return false;
+	}
+	for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+		if (Object.is(prevDeps[i], nextDeps[i])) {
+			continue;
+		}
+		return false;
+	}
+	return true;
 }
 
 function updateState<State>(): [State, Dispatch<State>] {
